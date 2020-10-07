@@ -1,16 +1,32 @@
+from typing import Optional
 from datetime import datetime
 from fastapi import FastAPI
 
 app = FastAPI()
 
+
 @app.get("/")
-def root():
+def read_root():
     return { "time": datetime.now() }
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/phonebook/{name}")
+def read_item(name: str):
+    if name in phonebook:
+        return {"name": name, "phone_number": phonebook[name]}
+    else:
+        return {"name": name, "phone_number": "number not found!"}
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
+phonebook = {"neha" : "609-123-1456", "max" : "487-290-9784", "bob" : "347-986-0218"}
+
+@app.get("/songdirectory/{name}")
+def read_item(name: str):
+    return {f'{songs[name][0]} was made in {songs[name][1]} and was a part of the {songs[name][2]} album'}
+
+songs = {"WayV" : ["MoonWalk", "2019", "Take Over the Moon"], "Taemin" : ["Criminal", "2020", "Never Gonna Dance Again"], "Witcher" : ["Toss a Coin to Your Witcher", "2020", "The Witcher"]}
+
+@app.get("/palindrome/{name}")
+def read_item(name: str):
+    if name == name[::-1]:
+        return {f'{name} is a palindrome'}
+    else:
+        return {f'{name} is not a palindrome :('}
